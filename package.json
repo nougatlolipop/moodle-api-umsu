@@ -1,0 +1,22 @@
+{
+  "name": "moodle-api-umsu",
+  "version": "1.0.0",
+  "description": "moodle api for umsu",
+  "main": "src/main.js",
+  "scripts": {
+    "start": "nodemon src/main.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^1.7.4",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "qs": "^6.13.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.4"
+  }
+}
