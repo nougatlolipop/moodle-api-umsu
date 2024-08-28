@@ -52,6 +52,32 @@ app.post("/login", async (req, res) => {
   }
 });
 
+// Endpoint untuk mendapatkan kursus terbaru yang diakses
+app.post("/getRecentCourses", async (req, res) => {
+  const { token } = req.body;
+
+  try {
+    // Ambil user ID dari token
+    const userid = await getUserIdFromToken(token);
+    const response = await axios.post(
+      `${process.env.MOODLE_URL}/webservice/rest/server.php`,
+      null,
+      {
+        params: {
+          wstoken: token,
+          wsfunction: "core_course_get_recent_courses",
+          moodlewsrestformat: "json",
+          userid: userid, // ID pengguna yang ingin Anda ambil data kursus terbarunya
+        },
+      }
+    );
+
+    res.json(response.data);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 // Endpoint untuk mendapatkan kursus yang terdaftar berdasarkan klasifikasi timeline
 app.post("/get-enrolled-courses", async (req, res) => {
   const { token, classification, offset, limit } = req.body;
@@ -94,32 +120,6 @@ app.post("/search-courses", async (req, res) => {
           moodlewsrestformat: "json",
           criterianame: "search",
           criteriavalue: query || "", // Kata kunci untuk mencari kursus
-        },
-      }
-    );
-
-    res.json(response.data);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
-
-// Endpoint untuk mendapatkan kursus terbaru yang diakses
-app.post("/get-recent-courses", async (req, res) => {
-  const { token } = req.body;
-
-  try {
-    // Ambil user ID dari token
-    const userid = await getUserIdFromToken(token);
-    const response = await axios.post(
-      `${process.env.MOODLE_URL}/webservice/rest/server.php`,
-      null,
-      {
-        params: {
-          wstoken: token,
-          wsfunction: "core_enrol_get_users_courses",
-          moodlewsrestformat: "json",
-          userid: userid, // ID pengguna yang ingin Anda ambil data kursus terbarunya
         },
       }
     );
