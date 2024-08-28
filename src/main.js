@@ -78,8 +78,32 @@ app.post("/getRecentCourses", async (req, res) => {
   }
 });
 
+// Endpoint untuk mencari kursus berdasarkan keyword
+app.post("/searchCourses", async (req, res) => {
+  const { token, keyword } = req.body;
+
+  try {
+    const response = await axios.post(
+      `${process.env.MOODLE_URL}/webservice/rest/server.php`,
+      null,
+      {
+        params: {
+          wstoken: token,
+          wsfunction: "core_course_search_courses",
+          moodlewsrestformat: "json",
+          criterianame: "search",
+          criteriavalue: keyword || "", // Kata kunci untuk mencari kursus
+        },
+      }
+    );
+
+    res.json(response.data);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
 // Endpoint untuk mendapatkan kursus yang terdaftar berdasarkan klasifikasi timeline
-app.post("/get-enrolled-courses", async (req, res) => {
+app.post("/getCoursesOverview", async (req, res) => {
   const { token, classification, offset, limit } = req.body;
 
   try {
@@ -95,31 +119,6 @@ app.post("/get-enrolled-courses", async (req, res) => {
           classification: classification, // Misalnya: 'past,inprogress,future'
           offset: offset || 0, // Offset untuk pagination
           limit: limit || 10, // Jumlah data yang dikembalikan
-        },
-      }
-    );
-
-    res.json(response.data);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
-
-// Endpoint untuk mencari kursus berdasarkan keyword
-app.post("/search-courses", async (req, res) => {
-  const { token, query } = req.body;
-
-  try {
-    const response = await axios.post(
-      `${process.env.MOODLE_URL}/webservice/rest/server.php`,
-      null,
-      {
-        params: {
-          wstoken: token,
-          wsfunction: "core_course_search_courses",
-          moodlewsrestformat: "json",
-          criterianame: "search",
-          criteriavalue: query || "", // Kata kunci untuk mencari kursus
         },
       }
     );
