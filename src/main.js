@@ -29,6 +29,28 @@ async function getUserIdFromToken(token) {
   }
 }
 
+app.post("/getProfile", async (req, res) => {
+  const { token } = req.body;
+
+  try {
+    const response = await axios.post(
+      `${process.env.MOODLE_URL}/webservice/rest/server.php`,
+      null,
+      {
+        params: {
+          wstoken: token,
+          wsfunction: "core_webservice_get_site_info",
+          moodlewsrestformat: "json",
+        },
+      }
+    );
+
+    res.json(response.data);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 // Endpoint untuk login dan mendapatkan token dari Moodle
 app.post("/login", async (req, res) => {
   const { username, password } = req.body;
